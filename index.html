@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MarginPilot | E-Commerce Profit & Breakeven Calculator</title>
+<meta name="description" content="Product cost, shipping, gateway fees, ads → recommended price, breakeven units and exact net profit.">
+<link rel="canonical" href="https://aoodiakdiro0001-ops.github.io/marginpilot/">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#0b0e14">
+<meta property="og:type" content="website">
+<meta property="og:title" content="MarginPilot | Profit Calculator">
+<meta property="og:description" content="Price it right: margin, breakeven, ROAS.">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Consolas,monospace}
+:root{--bg:#0b0e14;--panel:#141b2e;--line:#2a3557;--grn:#34d399;--gold:#fbbf24;--blu:#60a5fa;--txt:#e0e6f2;--mut:#8b98b8;--red:#f87171}
+body{background:var(--bg);color:var(--txt)}
+header{display:flex;align-items:center;gap:12px;padding:14px 20px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.logo{font-size:22px;font-weight:900;color:var(--grn)}
+.logo small{display:block;font-size:11px;color:var(--mut);font-weight:400}
+header select{margin-left:auto;background:var(--panel);color:var(--txt);border:1px solid var(--line);border-radius:14px;padding:7px 10px;font-size:13px}
+.tabs{display:flex;gap:6px;padding:14px 16px 0;flex-wrap:wrap;max-width:1100px;margin:0 auto}
+.tabs button{background:var(--panel);color:var(--txt);border:1px solid var(--line);border-bottom:none;padding:10px 16px;border-radius:12px 12px 0 0;cursor:pointer;font-weight:800;font-size:13px}
+.tabs button.on{background:#1a2547;color:var(--grn)}
+main{max-width:1100px;margin:0 auto;padding:18px 15px 60px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:0 14px 14px 14px;padding:22px;display:none}
+.panel.on{display:block}
+.panel h2{color:var(--grn);margin-bottom:6px;font-size:19px}
+.panel p.sub{color:var(--mut);font-size:13px;margin-bottom:12px;line-height:1.7}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:760px){.grid2{grid-template-columns:1fr}}
+.box{background:#0b0e14;border:1px solid var(--line);border-radius:14px;padding:16px}
+.box h3{font-size:14px;color:var(--blu);margin-bottom:10px}
+label.fl{display:block;font-size:12.5px;color:var(--mut);margin:8px 0 3px}
+input[type=text],input[type=number],select{background:#0b0e14;border:1px solid var(--line);color:var(--txt);border-radius:10px;padding:10px 13px;font-size:14px;outline:none;width:100%}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0;align-items:center}
+button.go{background:var(--grn);color:#04160a;border:none;padding:11px 26px;border-radius:10px;font-weight:900;cursor:pointer;font-size:14px}
+button.alt{background:transparent;color:var(--blu);border:1px solid var(--blu);padding:9px 16px;border-radius:10px;cursor:pointer;font-size:13px}
+.res{background:#0b0e14;border:1px solid var(--line);border-radius:12px;padding:14px;margin:10px 0;font-size:14px;line-height:2}
+.res b.big{font-size:22px;color:var(--gold)}
+table.bt{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:8px}
+table.bt th,table.bt td{border-bottom:1px solid var(--line);padding:8px 7px;text-align:left}
+table.bt th{color:var(--grn);font-size:12px}
+table.bt td.n{text-align:right;font-variant-numeric:tabular-nums}
+.note{background:#1a2547;border:1px solid var(--line);border-radius:10px;padding:10px 14px;font-size:12.5px;color:var(--mut);margin:10px 0;line-height:1.7}
+.warn{background:#3a2c10;border:1px solid var(--gold);border-radius:10px;padding:10px 14px;font-size:12.5px;color:var(--gold);margin:10px 0}
+.affgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-top:10px}
+.aff{background:#0b0e14;border:1px solid var(--line);border-radius:14px;padding:16px;text-align:center;font-size:13px}
+.aff b{display:block;font-size:15px;margin-bottom:4px}
+.aff small{color:var(--mut);display:block;margin-bottom:10px}
+.aff a{background:var(--grn);color:#06281c;font-weight:800;text-decoration:none;font-size:13px;padding:9px 20px;border-radius:12px;display:inline-block}
+.refbadge{font-size:10px;font-weight:900;background:var(--gold);color:#231a03;border-radius:8px;padding:2px 7px;margin-left:6px}
+.donate{background:linear-gradient(135deg,#1a2547,#0e2a1d);border:1px solid var(--grn);border-radius:16px;padding:20px;text-align:center;margin-top:8px;font-size:13px}
+.donate .addr{background:#0b0e14;border-radius:10px;padding:10px;font-family:monospace;font-size:12px;word-break:break-all;direction:ltr;margin:6px auto;color:var(--grn);max-width:560px}
+.hist{border:1px solid var(--line);border-radius:12px;padding:12px;margin:8px 0;font-size:13px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.adslot{max-width:1100px;margin:12px auto 0;padding:0 15px;text-align:center}
+.adslot .ph{display:block;border:1px dashed var(--line);border-radius:10px;color:var(--mut);font-size:12px;padding:10px}
+footer{text-align:center;color:var(--mut);font-size:12.5px;padding:26px 16px;border-top:1px solid var(--line);line-height:2}
+footer a{color:var(--grn)}
+#toast{position:fixed;bottom:25px;left:50%;transform:translateX(-50%);background:#222;color:#fff;padding:12px 25px;border-radius:25px;z-index:200;display:none;font-size:14px;max-width:92vw;text-align:center}
+</style>
+</head>
+<body>
+<header>
+<div class="logo">📈 MarginPilot<small data-i="tag"></small></div>
+<select id="langSel" onchange="setLang(this.value)">
+<option value="en" selected>🇬🇧 English</option><option value="tr">🇹🇷 Türkçe</option><option value="ar">🇸🇦 العربية</option>
+</select>
+</header>
+<div class="tabs" id="tabs"></div>
+<main>
+<section class="panel on" id="p-calc">
+<h2 data-i="cT"></h2><p class="sub" data-i="cS"></p>
+<div class="grid2">
+<div class="box"><h3 data-i="inT"></h3>
+<div class="row"><div style="flex:1"><label class="fl" data-i="fCogs"></label><input type="number" id="cCogs" value="100" step="any"></div><div style="flex:1"><label class="fl" data-i="fShip"></label><input type="number" id="cShip" value="30" step="any"></div></div>
+<div class="row"><div style="flex:1"><label class="fl" data-i="fPack"></label><input type="number" id="cPack" value="5" step="any"></div><div style="flex:1"><label class="fl" data-i="fVat"></label><input type="number" id="cVat" value="20" step="any"></div></div>
+<div class="row"><div style="flex:1"><label class="fl" data-i="fGate"></label><input type="number" id="cGate" value="3" step="any"></div><div style="flex:1"><label class="fl" data-i="fGateF"></label><input type="number" id="cGateF" value="2" step="any"></div></div>
+<div class="row"><div style="flex:1"><label class="fl" data-i="fMkt"></label><input type="number" id="cMkt" value="15" step="any"></div><div style="flex:1"><label class="fl" data-i="fAds"></label><input type="number" id="cAds" value="40" step="any"></div></div>
+<div class="row"><div style="flex:1"><label class="fl" data-i="fRet"></label><input type="number" id="cRet" value="5" step="any"></div><div style="flex:1"><label class="fl" data-i="fRetC"></label><input type="number" id="cRetC" value="35" step="any"></div></div>
+<div class="row"><div style="flex:1"><label class="fl" data-i="fMarg"></label><input type="number" id="cMarg" value="20" step="any"></div><div style="flex:1"><label class="fl" data-i="fFix"></label><input type="number" id="cFix" value="10000" step="any"></div></div>
+<label class="fl" data-i="fCur"></label><select id="cCur"><option value="TRY">₺ TRY</option><option value="USD">$ USD</option><option value="EUR">€ EUR</option></select>
+<div class="row"><button class="go" onclick="calc()" data-i="btnCalc"></button><button class="alt" onclick="saveEst()" data-i="btnSave"></button></div>
+</div>
+<div class="box"><h3 data-i="outT"></h3><div id="calcRes">—</div></div>
+</div>
+<div class="note" data-i="mathNote"></div>
+</section>
+<section class="panel" id="p-hist">
+<h2 data-i="hT"></h2><p class="sub" data-i="hS"></p>
+<div id="histList"></div>
+</section>
+<section class="panel" id="p-aff">
+<h2 data-i="aT"></h2><p class="sub" data-i="aS"></p>
+<div class="affgrid" id="affGrid"></div>
+</section>
+<section class="panel" id="p-donate">
+<h2 data-i="doT"></h2><p class="sub" data-i="doS"></p>
+<div class="donate">
+<div>₿ BTC</div><div class="addr" id="btcA"></div>
+<div>₮ USDT-TRC20</div><div class="addr" id="usdtA"></div>
+<div class="row" style="justify-content:center"><button class="alt" onclick="copyTxt(document.getElementById('btcA').textContent)" data-i="btnCopy"></button></div>
+<div style="font-size:12.5px">🏦 Baran Avisat — TRY: <code dir="ltr">TR10 0001 0090 1008 4013 0050 01</code></div>
+<div style="font-size:12.5px">🏦 Baran Avisat — USD: <code dir="ltr">TR80 0001 0090 1008 4013 0050 02</code></div>
+</div>
+</section>
+</main>
+<div class="adslot" id="adFoot"><span class="ph" data-i="adHere" style="display:block;border:1px dashed var(--line);border-radius:10px;color:var(--mut);font-size:12px;padding:10px"></span></div>
+<footer><span data-i="foot"></span><br>📧 <a href="mailto:baranavisat@gmail.com">baranavisat@gmail.com</a> · 📞 <a href="tel:+905313263722" dir="ltr">+90 531 326 37 22</a> · <a href="https://wa.me/905313263722" target="_blank" rel="noopener">WhatsApp</a><br><a href="README.md" target="_blank">README</a> · MIT</footer>
+<div id="toast"></div>
+<script>
+const CONFIG={ads:{client:'',slot:'',carbonServe:'',carbonPlacement:''},
+pay:{btc:'bc1q8dhtdrndxsl70e97t8grydfe6pjue37zrhzf6c',usdt:'TLWdTjqqogkXNEXGiPWsGdjFP6ioycxeWW'},
+fx:{TRY:1,USD:49.26,EUR:53.4},
+aff:{shopify:'',woo:'',iyzico:'',paytr:'',stripe:'',araskargo:''}};
+const AFFS=[
+{k:'shopify',n:'Shopify',d:'Hosted store platform',u:'https://www.shopify.com'},
+{k:'woo',n:'WooCommerce',d:'WordPress commerce',u:'https://woocommerce.com'},
+{k:'iyzico',n:'iyzico',d:'TR payment gateway',u:'https://www.iyzico.com'},
+{k:'paytr',n:'PayTR',d:'TR payment gateway',u:'https://www.paytr.com'},
+{k:'stripe',n:'Stripe',d:'Global payments',u:'https://stripe.com'},
+{k:'araskargo',n:'Aras Kargo',d:'Shipping & packaging',u:'https://araskargo.com.tr'}];
+const T={
+en:{tag:'E-commerce profit & breakeven calculator',tabC:'📊 Calculator',tabH:'📚 Scenarios',tabA:'🤝 Partners',tabDo:'💚 Donate',
+cT:'📊 Profit & Breakeven',cS:'Costs in → recommended price, breakeven units and exact net profit out. Margin math shown openly.',
+inT:'Costs (per order)',outT:'Result',fCogs:'Product cost',fShip:'Shipping',fPack:'Packaging',fVat:'VAT % (incl.)',fGate:'Gateway %',fGateF:'Gateway fixed',fMkt:'Marketplace %',fAds:'Ads / order',fRet:'Return rate %',fRetC:'Return cost',fMarg:'Target margin %',fFix:'Monthly fixed costs',fCur:'Currency',btnCalc:'Calculate',btnSave:'Save',
+mathNote:'Model: expected = (1−r)·(P/(1+v) − P·(g+m) − fixedperorder) − r·retCost. Recommended P = B/(A−m). VAT treated as price-inclusive.',
+hT:'📚 Saved Scenarios',hS:'Stored in this browser only.',
+aT:'🤝 Business Partners',aS:'Hosting, gateways and shippers. REF links earn us lifetime commissions at the same price for you.',
+doT:'💚 Support MarginPilot',doS:'Free forever.',
+btnCopy:'Copy',adHere:'Merchant & business ads here',foot:'MarginPilot — free calculator. Verify with your accountant.',
+copied:'Copied ✅',needNum:'Enter valid costs ⚠️',saved:'Saved ✅',imposs:'⚠️ Impossible at this margin — lower costs or margin.',
+rPrice:'Recommended price',rProfit:'Net profit / order',rMargin:'Margin',rBE:'Breakeven units / mo',rRoas:'ROAS',rLad:'Price ladder',rRev:'Revenue',rFix2:'Fixed covered'},
+tr:{tag:'E-ticaret kâr & başabaş hesaplayıcı',tabC:'📊 Hesaplayıcı',tabH:'📚 Senaryolar',tabA:'🤝 Ortaklar',tabDo:'💚 Destek',
+cT:'📊 Kâr & Başabaş',cS:'Maliyetler gir → önerilen fiyat, başabaş adedi ve net kâr. Matematik açıkça gösterilir.',
+inT:'Maliyetler (sipariş başına)',outT:'Sonuç',fCogs:'Ürün maliyeti',fShip:'Kargo',fPack:'Paketleme',fVat:'KDV % (dahil)',fGate:'Gateway %',fGateF:'Gateway sabit',fMkt:'Pazaryeri %',fAds:'Reklam / sipariş',fRet:'İade oranı %',fRetC:'İade maliyeti',fMarg:'Hedef marj %',fFix:'Aylık sabit gider',fCur:'Para birimi',btnCalc:'Hesapla',btnSave:'Kaydet',
+mathNote:'Model: beklenen = (1−r)·(P/(1+v) − P·(g+m) − sabitler) − r·iadeMaliyeti. Önerilen P = B/(A−m). KDV fiyata dahil sayılır.',
+hT:'📚 Kayıtlı Senaryolar',hS:'Yalnızca bu tarayıcıda.',
+aT:'🤝 İş Ortakları',aS:'Hosting, gateway ve kargo. REF bağlantılar bize ömür boyu kazandırır.',
+doT:'💚 Destekle',doS:'Sonsuza dek ücretsiz.',
+btnCopy:'Kopyala',adHere:'Tüccar reklamları burada',foot:'MarginPilot — ücretsiz hesaplayıcı. Muhasebecinize doğrulayın.',
+copied:'Kopyalandı ✅',needNum:'Geçerli maliyet girin ⚠️',saved:'Kaydedildi ✅',imposs:'⚠️ Bu marjla imkansız — maliyeti/marji düşürün.',
+rPrice:'Önerilen fiyat',rProfit:'Net kâr / sipariş',rMargin:'Marj',rBE:'Başabaş adet / ay',rRoas:'ROAS',rLad:'Fiyat merdiveni',rRev:'Ciro',rFix2:'Sabit karşılanan'},
+ar:{tag:'حاسبة الربح والتعادل للمتاجر',tabC:'📊 الحاسبة',tabH:'📚 السيناريوهات',tabA:'🤝 شركاء',tabDo:'💚 ادعم',
+cT:'📊 الربح والتعادل',cS:'التكاليف تُدخل ← السعر الموصى ونقطة التعادل وصافي الربح. الرياضيات معروضة.',
+inT:'التكاليف (للطلب)',outT:'النتيجة',fCogs:'تكلفة المنتج',fShip:'الشحن',fPack:'التغليف',fVat:'الضريبة % (شاملة)',fGate:'البوابة %',fGateF:'البوابة ثابت',fMkt:'المنصة %',fAds:'إعلان / طلب',fRet:'نسبة الإرجاع %',fRetC:'تكلفة الإرجاع',fMarg:'الهامش %',fFix:'ثابت شهري',fCur:'العملة',btnCalc:'احسب',btnSave:'احفظ',
+mathNote:'النموذج معروض openly. الضريبة محسوبة ضمن السعر.',
+hT:'📚 السيناريوهات',hS:'في هذا المتصفح فقط.',
+aT:'🤝 شركاء الأعمال',aS:'استضافة وبوابات وشحن. روابط REF تكسبنا مدى الحياة.',
+doT:'💚 ادعم',doS:'مجاني للأبد.',
+btnCopy:'نسخ',adHere:'إعلانات التجار هنا',foot:'MarginPilot — حاسبة مجانية. تحقق مع محاسبك.',
+copied:'تم ✅',needNum:'أدخل تكاليف صالحة ⚠️',saved:'حُفظ ✅',imposs:'⚠️ مستحيل بهذا الهامش — اخفض التكاليف.',
+rPrice:'السعر الموصى',rProfit:'صافي الربح / طلب',rMargin:'الهامش',rBE:'التعادل / شهر',rRoas:'ROAS',rLad:'سلم الأسعار',rRev:'الإيراد',rFix2:'ثابت مغطى'}};
+let lang='en',curR=null;
+const t=k=>(T[lang]&&T[lang][k])||T.en[k]||k;
+function setLang(v){lang=v;document.documentElement.lang=v;document.documentElement.dir=(v==='ar')?'rtl':'ltr';document.getElementById('langSel').value=v;
+document.querySelectorAll('[data-i]').forEach(e=>{e.textContent=t(e.dataset.i);});
+buildTabs();renderAff();renderHist();renderDonate();}
+const TABS=[['calc','tabC'],['hist','tabH'],['aff','tabA'],['donate','tabDo']];
+function buildTabs(){document.getElementById('tabs').innerHTML=TABS.map(x=>`<button id="tab-${x[0]}" onclick="tab('${x[0]}')">${t(x[1])}</button>`).join('');document.getElementById('tab-calc').classList.add('on');}
+function tab(w){TABS.forEach(x=>{const b=document.getElementById('tab-'+x[0]);if(b)b.classList.toggle('on',w===x[0]);document.getElementById('p-'+x[0]).classList.toggle('on',w===x[0]);});}
+function toast(m){let d=document.getElementById('toast');d.textContent=m;d.style.display='block';clearTimeout(d._h);d._h=setTimeout(()=>d.style.display='none',2200);}
+function copyTxt(x){try{if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(x);}catch(e){}toast(t('copied'));}
+function num(id,d){const v=parseFloat((document.getElementById(id)||{}).value);return isNaN(v)?(d||0):v;}
+function econ(o){
+const r=o.ret/100,v=o.vat/100,g=o.gate/100,m=o.mkt/100,mg=o.marg/100;
+const A=(1-r)*(1/(1+v)-g-m);
+const B=(1-r)*(o.gateF+o.cogs+o.ship+o.pack+o.ads)+r*o.retC;
+if(!(A>mg))return {ok:false,A,B};
+const P=B/(A-mg);
+const exp=P*A-B;
+const be=o.fix>0?(exp>0?Math.ceil(o.fix/exp):Infinity):0;
+const roas=o.ads>0?P/o.ads:Infinity;
+return {ok:true,A,B,P,exp,mg,be,roas};
+}
+function fmt(n,cur){const rate=CONFIG.fx[cur]||1;const v=n/rate;const s=Math.abs(v)>=100?Math.round(v).toLocaleString('en-US'):v.toFixed(2);const sym={TRY:'₺',USD:'$',EUR:'€'}[cur]||'';return s+' '+sym;}
+function calc(){
+const o={cogs:num('cCogs'),ship:num('cShip'),pack:num('cPack'),vat:num('cVat'),gate:num('cGate'),gateF:num('cGateF'),mkt:num('cMkt'),ads:num('cAds'),ret:num('cRet'),retC:num('cRetC'),marg:num('cMarg',20),fix:num('cFix'),cur:document.getElementById('cCur').value};
+if(!(o.cogs>=0)){toast(t('needNum'));return;}
+const r=econ(o);curR={o,r,time:new Date().toLocaleString()};
+if(!r.ok){document.getElementById('calcRes').innerHTML=`<div class="warn">${t('imposs')} (A=${r.A.toFixed(3)})</div>`;return r;}
+const lad=[0.9,1,1.2].map(f=>{const P=r.P*f;return {P,e:P*r.A-r.B};});
+document.getElementById('calcRes').innerHTML=`${t('rPrice')}: <b class="big">${fmt(r.P,o.cur)}</b> <small>(${t('rMargin')} ${(r.exp/r.P*100).toFixed(1)}%)</small><br>${t('rProfit')}: <b>${fmt(r.exp,o.cur)}</b><br>${t('rBE')}: <b>${isFinite(r.be)?r.be:'—'}</b><br>${t('rRoas')}: <b>${isFinite(r.roas)?r.roas.toFixed(1):'—'}</b><table class="bt"><tr><th>${t('rLad')}</th><th>${t('rPrice')}</th><th>${t('rProfit')}</th></tr>${lad.map(x=>`<tr><td>${Math.round(x.P/r.P*100)}%</td><td class="n">${fmt(x.P,o.cur)}</td><td class="n">${fmt(x.e,o.cur)}</td></tr>`).join('')}</table><div class="note">${t('rRev')}: ${fmt(r.P*(isFinite(r.be)?r.be:0),o.cur)} · ${t('rFix2')}</div>`;
+return r;
+}
+function hist(){try{return JSON.parse(localStorage.getItem('mp_hist')||'[]');}catch(e){return [];}}
+function saveEst(){if(!curR||!curR.ok)calc();if(!curR||!curR.ok)return;try{const h=hist();h.unshift({P:Math.round(curR.r.P),e:Math.round(curR.r.exp),be:curR.r.be,time:curEstTime()});localStorage.setItem('mp_hist',JSON.stringify(h.slice(0,50)));}catch(e){}renderHist();toast(t('saved'));}
+function curEstTime(){return curR&&curR.time?curR.time:new Date().toLocaleString();}
+function renderHist(){const h=hist();document.getElementById('histList').innerHTML=h.map((x,i)=>`<div class="hist"><b style="flex:1">$${Math.round(x.P).toLocaleString('en-US')} · +$${Math.round(x.e).toLocaleString('en-US')} · BE ${x.be}</b><small style="color:var(--mut)">${x.time||''}</small><button class="alt" style="padding:5px 12px;font-size:12px" onclick="delHist(${i})">❌</button></div>`).join('')||'<p style="color:var(--mut)">—</p>';}
+function delHist(i){try{const h=hist();h.splice(i,1);localStorage.setItem('mp_hist',JSON.stringify(h));}catch(e){}renderHist();}
+function affFor(k){const a=AFFS.find(x=>x.k===k);return (CONFIG.aff&&CONFIG.aff[k])||(a?a.u:'#');}
+function isAff(k){return !!(CONFIG.aff&&CONFIG.aff[k]);}
+function renderAff(){
+document.getElementById('affGrid').innerHTML=AFFS.map(a=>`<div class="aff"><b>${a.n}${isAff(a.k)?'<span class="refbadge">REF</span>':''}</b><small>${a.d}</small><br><a target="_blank" rel="nofollow sponsored noopener" href="${affFor(a.k)}">→</a></div>`).join('');
+}
+function renderDonate(){
+document.getElementById('btcA').textContent=CONFIG.pay.btc;
+document.getElementById('usdtA').textContent=CONFIG.pay.usdt;
+}
+function loadAds(){const A=CONFIG.ads,el=document.getElementById('adFoot');if(!el)return;
+if(A.client){el.innerHTML='<ins class="adsbygoogle" style="display:block" data-ad-client="'+A.client+'" data-ad-slot="'+(A.slot||'')+'" data-ad-format="auto"></ins>';
+if(!document.querySelector('script[src*="adsbygoogle"]')){const s=document.createElement('script');s.async=true;s.src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client='+A.client;s.crossOrigin='anonymous';document.head.appendChild(s);}try{(window.adsbygoogle=window.adsbygoogle||[]).push({});}catch(e){}}
+else if(A.carbonServe){el.innerHTML='';const s=document.createElement('script');s.async=true;s.id='_carbonads_js';s.src='//cdn.carbonads.com/carbon.js?serve='+A.carbonServe+'&placement='+A.carbonPlacement;el.appendChild(s);}}
+setLang('en');loadAds();renderDonate();
+</script>
+</body>
+</html>
